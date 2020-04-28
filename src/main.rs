@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::{thread, time};
 
-use clap::{App, Arg};
+use clap::*;
 use handlebars::Handlebars;
 use reqwest::{blocking::Client, header};
 use serde::Serialize;
@@ -133,10 +133,7 @@ fn static_file<'r>(path: std::path::PathBuf) -> response::Result<'r> {
 }
 
 fn main() {
-	let matches = App::new(env!("CARGO_PKG_NAME"))
-		.version(env!("CARGO_PKG_VERSION"))
-		.about(env!("CARGO_PKG_DESCRIPTION"))
-		.author(env!("CARGO_PKG_AUTHORS"))
+	let matches = app_from_crate!()
 		.arg(
 			Arg::with_name("host")
 				.help("FreeNAS/TrueNAS host")
