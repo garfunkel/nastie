@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::{thread, time};
 
-use base64;
 use clap::{App, Arg};
 use handlebars::Handlebars;
 use reqwest::{blocking::Client, header};
