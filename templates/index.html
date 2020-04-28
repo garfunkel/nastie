@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="/static/css/w3.css">
+		<link rel="stylesheet" href="/static/css/w3-theme-black.css">
+		<link rel="icon" type="image/png" href="/static/icons/favicon-16x16.png" sizes="16x16">
+		<link rel="icon" type="image/png" href="/static/icons/favicon-32x32.png" sizes="32x32">
+		<link rel="icon" type="image/png" href="/static/icons/favicon-96x96.png" sizes="96x96">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>nastie</title>
+	</head>
+	<body class="w3-theme">
+		<div class="w3-content">
+			<div class="w3-section w3-hide-small w3-hide-medium"></div>
+			<ul class="w3-ul w3-card-4">
+				{{#each this}}
+					{{#if this.admin_url}}
+						<li class="w3-row w3-theme-l1 w3-hover-dark-grey" style="position: relative; cursor: pointer">
+							<a href="{{this.admin_url}}"
+								style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+							</a>
+					{{else}}
+						<li class="w3-row w3-theme-l1 w3-hover-dark-grey" style="cursor: not-allowed">
+					{{/if}}
+					<img src="{{this.icon_url}}" class="w3-quarter w3-circle" style="width: 85px" width="85"
+						height="85">
+					<div class="w3-rest" style="padding-left: 16px">
+						<span class="w3-xlarge"><b>{{@key}}</b></span>
+						<br>
+						<span><b>Jail IP:</b> {{this.jail_ip}}</span>
+						<br>
+						<span><b>Admin URL:</b> {{#if this.admin_url}}<a
+									href="{{this.admin_url}}">{{this.admin_url}}</a>
+							{{else}}N/A{{/if}}</span>
+					</div>
+					</li>
+				{{/each}}
+			</ul>
+			<div class="w3-section w3-hide-small w3-hide-medium"></div>
+		</div>
+	</body>
+</html>
