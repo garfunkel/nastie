@@ -213,10 +213,13 @@ fn main() {
 		let client = Client::builder().default_headers(headers).build().unwrap();
 
 		loop {
-			let mut jails = arc2_jails.write().unwrap();
-			*jails = list(&client, &api_url_base);
+			let new_jails = list(&client, &api_url_base);
 
-			std::mem::drop(jails);
+			{
+				let mut jails = arc2_jails.write().unwrap();
+
+				*jails = new_jails;
+			}
 
 			thread::sleep(time::Duration::from_secs(30));
 		}
