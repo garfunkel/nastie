@@ -44,7 +44,7 @@ struct Jail {
 	icon_url: Option<String>,
 }
 
-fn list(client: &Client, api_url_base: &String) -> std::collections::HashMap<String, Jail> {
+fn list(client: &Client, api_url_base: &str) -> std::collections::HashMap<String, Jail> {
 	let mut jails = HashMap::new();
 	let response = client
 		.get(&(api_url_base.to_owned() + "jail"))
@@ -74,23 +74,20 @@ fn list(client: &Client, api_url_base: &String) -> std::collections::HashMap<Str
 	for plugin_obj in obj.members() {
 		let name = plugin_obj["name"].to_string();
 
-		match &plugin_obj["admin_portals"] {
-			json::JsonValue::Array(admin_urls) => {
-				jails.entry(name.clone()).and_modify(|jail| {
-					jail.admin_url = Some(admin_urls[0].to_string());
-					jail.icon_url = Some(
-						plugin_obj["plugin_repository"]
-							.to_string()
-							.trim_end_matches(".git")
-							.replace("github.com", "raw.githubusercontent.com")
-							+ &format!(
-								"/master/icons/{}.png",
-								name.replace("plexmediaserver", "plex")
-							),
-					);
-				});
-			}
-			_ => (),
+		if let json::JsonValue::Array(admin_urls) = &plugin_obj["admin_portals"] {
+			jails.entry(name.clone()).and_modify(|jail| {
+				jail.admin_url = Some(admin_urls[0].to_string());
+				jail.icon_url = Some(
+					plugin_obj["plugin_repository"]
+						.to_string()
+						.trim_end_matches(".git")
+						.replace("github.com", "raw.githubusercontent.com")
+						+ &format!(
+							"/master/icons/{}.png",
+							name.replace("plexmediaserver", "plex")
+						),
+				);
+			});
 		}
 	}
 
@@ -194,9 +191,10 @@ fn main() {
 	let user = matches.value_of("user").unwrap();
 	let password = matches.value_of("password").unwrap();
 
-	let protocol = match matches.is_present("secure") {
-		true => "https",
-		_ => "http",
+	let protocol = if matches.is_present("secure") {
+		"https"
+	} else {
+		"http"
 	};
 
 	let auth_value = format!("Basic {}", base64::encode(format!("{}:{}", user, password)));
