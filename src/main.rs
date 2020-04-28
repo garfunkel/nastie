@@ -55,13 +55,10 @@ fn list(client: &Client, api_url_base: &String) -> std::collections::HashMap<Str
 	let obj = json::parse(&response.text().unwrap()).unwrap();
 
 	for jail_obj in obj.members() {
-		let id = jail_obj["id"].to_string();
-		let ip = jail_obj["ip4_addr"].to_string();
-
 		jails.insert(
-			id.into(),
+			jail_obj["id"].to_string(),
 			Jail {
-				jail_ip: ip.into(),
+				jail_ip: jail_obj["ip4_addr"].to_string(),
 				admin_url: None,
 				icon_url: None,
 			},
