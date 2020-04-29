@@ -1,3 +1,5 @@
+//! TrueNAS/FreeNAS plugin/jail web directory.
+
 #![feature(proc_macro_hygiene, decl_macro)]
 
 use std::collections::HashMap;
@@ -29,14 +31,17 @@ const API_URL_BASE: &str = "/api/v2.0/";
 const TEMPLATE_INDEX: &str = "index.html";
 const ICON_FREEBSD: &str = "/static/icons/beastie.png";
 
+/// Storage for embedded static files.
 #[derive(RustEmbed)]
 #[folder = "static/"]
 struct Static;
 
+/// Storage for embedded template files.
 #[derive(RustEmbed)]
 #[folder = "templates/"]
 struct Templates;
 
+/// Represents an iocage jail (with optional fields for jails belonging to a plugin).
 #[derive(Serialize)]
 struct Jail {
 	jail_ip: String,
@@ -44,6 +49,7 @@ struct Jail {
 	icon_url: Option<String>,
 }
 
+/// Retrieves information about jails, returning a map of jail name to Jail struct.
 fn list(client: &Client, api_url_base: &str) -> std::collections::HashMap<String, Jail> {
 	let mut jails = HashMap::new();
 	let response = client
@@ -100,6 +106,7 @@ fn list(client: &Client, api_url_base: &str) -> std::collections::HashMap<String
 	jails
 }
 
+/// Renders the index template and returns view.
 #[get("/")]
 fn index(
 	handlebars: rocket::State<Handlebars>,
@@ -110,6 +117,7 @@ fn index(
 	rocket::response::content::Html(handlebars.render(TEMPLATE_INDEX, &json!(&*jails)).unwrap())
 }
 
+/// Returns static file responses.
 #[get("/static/<path..>")]
 fn static_file<'r>(path: std::path::PathBuf) -> response::Result<'r> {
 	let filename = path.display().to_string();
@@ -132,6 +140,7 @@ fn static_file<'r>(path: std::path::PathBuf) -> response::Result<'r> {
 	)
 }
 
+/// Parses command line arguments and starts rocket server.
 fn main() {
 	let matches = app_from_crate!()
 		.arg(
